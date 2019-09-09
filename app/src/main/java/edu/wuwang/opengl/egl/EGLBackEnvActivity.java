@@ -81,7 +81,7 @@ public class EGLBackEnvActivity extends BaseActivity {
             mBackEnv.setThreadOwner(getMainLooper().getThread().getName());
             mBackEnv.setFilter(new GrayFilter(getResources()));
             mBackEnv.setInput(bmp);
-            saveBitmap(mBackEnv.getBitmap());
+          //  saveBitmap(mBackEnv.getBitmap());
             c.close();
         }
     }

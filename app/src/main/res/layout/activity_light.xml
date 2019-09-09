@@ -14,19 +14,19 @@
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="环境光"
+            android:text="@string/ambient_light"
             android:id="@+id/ambient"
             android:layout_alignParentBottom="true" />
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="漫反射"
+            android:text="@string/diffuse_reflection"
             android:id="@+id/diffuse"
             android:layout_alignParentBottom="true" />
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="镜面反射"
+            android:text="@string/reflection_of_mirror"
             android:id="@+id/specular"
             android:layout_alignParentBottom="true" />
     </LinearLayout>

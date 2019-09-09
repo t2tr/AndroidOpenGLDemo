@@ -11,5 +11,5 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:onClick="onClick"
-        android:text="选择图片"/>
+        android:text="@string/select_image"/>
 </RelativeLayout>

@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/mDeal"
         app:showAsAction="always"
-        android:title="全部处理" />
+        android:title="@string/all_processing" />
     <item android:id="@+id/mDefault"
-        android:title="原图" />
+        android:title="@string/original_image" />
     <item android:id="@+id/mGray"
-        android:title="黑白" />
+        android:title="@string/gray" />
     <item android:id="@+id/mCool"
-        android:title="冷色调" />
+        android:title="@string/cool" />
     <item android:id="@+id/mWarm"
-        android:title="暖色调" />
+        android:title="@string/warm" />
     <item android:id="@+id/mBlur"
-        android:title="模糊" />
+        android:title="@string/blur" />
     <item android:id="@+id/mMagn"
-        android:title="放大镜" />
+        android:title="@string/magnifier" />
 </menu>

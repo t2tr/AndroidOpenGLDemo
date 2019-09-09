@@ -66,16 +66,16 @@ public class ChooseActivity extends AppCompatActivity {
 
     private void initData(){
         mData=new ArrayList<>();
-        add("三角形", Triangle.class);
-        add("正三角形", TriangleWithCamera.class);
-        add("彩色三角形", TriangleColorFull.class);
-        add("正方形", Square.class);
-        add("圆形", Oval.class);
-        add("正方体", Cube.class);
-        add("圆锥", Cone.class);
-        add("圆柱", Cylinder.class);
-        add("球体", Ball.class);
-        add("带光源的球体",BallWithLight.class);
+        add("Triangle", Triangle.class);
+        add("Triangle with camera", TriangleWithCamera.class);
+        add("Colorful Triangle", TriangleColorFull.class);
+        add("Square", Square.class);
+        add("Oval", Oval.class);
+        add("Cube", Cube.class);
+        add("Cone", Cone.class);
+        add("Cylinder", Cylinder.class);
+        add("Ball", Ball.class);
+        add("Ball with light",BallWithLight.class);
     }
 
     private void add(String showName,Class<?> clazz){

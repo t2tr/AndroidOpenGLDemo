@@ -38,20 +38,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mList= (RecyclerView)findViewById(R.id.mList);
         mList.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         data=new ArrayList<>();
-        add("绘制形体",FGLViewActivity.class);
-        add("图片处理",SGLViewActivity.class);
-        add("图形变换",VaryActivity.class);
-        add("相机",CameraActivity.class);
-        add("相机2 动画",Camera2Activity.class);
-        add("相机3 美颜",Camera3Activity.class);
-        add("压缩纹理动画",ZipActivity.class);
-        add("FBO使用",FBOActivity.class);
-        add("EGL后台处理",EGLBackEnvActivity.class);
-        add("3D obj模型",ObjLoadActivity.class);
-        add("obj+mtl模型",ObjLoadActivity2.class);
-        add("VR效果",VrContextActivity.class);
-        add("颜色混合",BlendActivity.class);
-        add("光照",LightActivity.class);
+        add("Drawing a shape",FGLViewActivity.class);
+        add("Image processing",SGLViewActivity.class);
+        add("Graphic transformation",VaryActivity.class);
+        add("Camera 1 animation",CameraActivity.class);
+        add("Camera 2 animation",Camera2Activity.class);
+        add("Camera 3 animation",Camera3Activity.class);
+        add("Compressed texture animation",ZipActivity.class);
+        add("Use FBO",FBOActivity.class);
+        add("EGL Back End",EGLBackEnvActivity.class);
+        add("3D obj model",ObjLoadActivity.class);
+        add("obj+mtl model",ObjLoadActivity2.class);
+        add("VR Effect",VrContextActivity.class);
+        add("Color mixing",BlendActivity.class);
+        add("Illumination",LightActivity.class);
         mList.setAdapter(new MenuAdapter());
     }
 

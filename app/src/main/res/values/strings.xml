@@ -1,17 +1,28 @@
 <resources>
     <string name="app_name">OpenGL</string>
-    <string name="change">切换</string>
+    <string name="change">Change</string>
 
-    <string name="type_draw">绘制形体</string>
-    <string name="type_texture">图片处理</string>
-    <string name="type_vary">图形变换</string>
-    <string name="type_camera">相机</string>
-    <string name="type_animation">压缩纹理动画</string>
-    <string name="type_fbo">FBO使用</string>
-    <string name="type_egl">EGL后台处理图片</string>
-    <string name="type_obj">3D Obj模型</string>
-    <string name="type_obj2">Obj+mtl模型</string>
+    <string name="type_draw">Type Draw</string>
+    <string name="type_texture">Texture</string>
+    <string name="type_vary">Vary</string>
+    <string name="type_camera">Camera</string>
+    <string name="type_animation">Animation</string>
+    <string name="type_fbo">FBO</string>
+    <string name="type_egl">EGL</string>
+    <string name="type_obj">3D Obj</string>
+    <string name="type_obj2">Obj+mtl</string>
 
-    <string name="pic_easy">原图</string>
-    <string name="pic_half">全部处理</string>
+    <string name="pic_easy">Easy Picture</string>
+    <string name="pic_half">Half Picture</string>
+    <string name="select_image">Select Image</string>
+    <string name="ambient_light">Ambient light</string>
+    <string name="diffuse_reflection">Diffuse reflection</string>
+    <string name="reflection_of_mirror">Reflection of irror</string>
+    <string name="all_processing">All processing</string>
+    <string name="original_image">Original image</string>
+    <string name="gray">Gray</string>
+    <string name="cool">Cool</string>
+    <string name="warm">Warm</string>
+    <string name="blur">Blur</string>
+    <string name="magnifier">Magnifier</string>
 </resources>
