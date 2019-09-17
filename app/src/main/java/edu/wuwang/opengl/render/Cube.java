@@ -138,7 +138,7 @@ public class Cube extends Shape{
         //设置透视投影
         Matrix.frustumM(mProjectMatrix, 0, -ratio, ratio, -1, 1, 3, 20);
         //设置相机位置
-        Matrix.setLookAtM(mViewMatrix, 0, 5.0f, 5.0f, 10.0f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        Matrix.setLookAtM(mViewMatrix, 0, 5.0f, 5.0f, (System.currentTimeMillis()/500)%5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
         //计算变换矩阵
         Matrix.multiplyMM(mMVPMatrix,0,mProjectMatrix,0,mViewMatrix,0);
     }
@@ -146,6 +146,7 @@ public class Cube extends Shape{
     @Override
     public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT| GLES20.GL_DEPTH_BUFFER_BIT);
+
         //将程序加入到OpenGLES2.0环境
         GLES20.glUseProgram(mProgram);
         //获取变换矩阵vMatrix成员句柄
@@ -168,9 +169,11 @@ public class Cube extends Shape{
         GLES20.glVertexAttribPointer(mColorHandle,4,
                 GLES20.GL_FLOAT,false,
                 0,colorBuffer);
+        Matrix.rotateM(mMVPMatrix,0,0.3f,0,1,0);
         //索引法绘制正方体
         GLES20.glDrawElements(GLES20.GL_TRIANGLES,index.length, GLES20.GL_UNSIGNED_SHORT,indexBuffer);
         //禁止顶点数组的句柄
         GLES20.glDisableVertexAttribArray(mPositionHandle);
+
     }
 }

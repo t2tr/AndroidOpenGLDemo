@@ -39,7 +39,7 @@ public class Triangle extends Shape {
 
     static final int COORDS_PER_VERTEX = 3;
     static float triangleCoords[] = {
-            0.5f,  0.5f, 0.0f, // top
+            0f,  1f, 0.0f, // top
             -0.5f, -0.5f, 0.0f, // bottom left
             0.5f, -0.5f, 0.0f  // bottom right
     };
@@ -57,7 +57,7 @@ public class Triangle extends Shape {
     private int mMatrixHandler;
 
     //设置颜色，依次为红绿蓝和透明通道
-    float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    float color[] = {90/255f, 200/255f,250/255f,1f };
 
     public Triangle(View mView) {
         super(mView);

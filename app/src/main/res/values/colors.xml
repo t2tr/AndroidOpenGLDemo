@@ -6,7 +6,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="titleBg">#FF111111</color>
     <color name="titleTextColor">#FFFFFFFF</color>
-
+    <color name="FlatGreen">#4CD964</color>
     <color name="bg">#FFFFFFFF</color>
     <color name="theme_text_normal">#FF2B2B2B</color>
 </resources>

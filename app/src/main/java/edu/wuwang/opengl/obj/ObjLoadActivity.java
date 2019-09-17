@@ -38,6 +38,7 @@ public class ObjLoadActivity extends BaseActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         mGLView.setRenderer(new GLSurfaceView.Renderer() {
             @Override
             public void onSurfaceCreated(GL10 gl, EGLConfig config) {

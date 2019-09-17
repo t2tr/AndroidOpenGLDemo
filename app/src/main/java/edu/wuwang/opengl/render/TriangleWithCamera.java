@@ -41,7 +41,7 @@ public class TriangleWithCamera extends Shape {
 
     static final int COORDS_PER_VERTEX = 3;
     static float triangleCoords[] = {
-            0.5f,  0.5f, 0.0f, // top
+            0.5f,  1f, 0.0f, // top
             -0.5f, -0.5f, 0.0f, // bottom left
             0.5f, -0.5f, 0.0f  // bottom right
     };
