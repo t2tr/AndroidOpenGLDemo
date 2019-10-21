@@ -3,17 +3,18 @@ package edu.wuwang.opengl;
 import edu.wuwang.opengl.blend.BlendActivity;
 import edu.wuwang.opengl.camera.Camera3Activity;
 import edu.wuwang.opengl.light.LightActivity;
+import edu.wuwang.opengl.vr.VRListActivity;
 import edu.wuwang.opengl.vr.VrContextActivity;
 import java.util.ArrayList;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import edu.wuwang.opengl.camera.Camera2Activity;
 import edu.wuwang.opengl.camera.CameraActivity;
@@ -50,6 +51,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         add("3D obj model",ObjLoadActivity.class);
         add("obj+mtl model",ObjLoadActivity2.class);
         add("VR Effect",VrContextActivity.class);
+        add("VR List Effect", VRListActivity.class);
         add("Color mixing",BlendActivity.class);
         add("Illumination",LightActivity.class);
         mList.setAdapter(new MenuAdapter());

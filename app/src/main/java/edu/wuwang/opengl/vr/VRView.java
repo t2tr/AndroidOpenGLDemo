@@ -7,72 +7,58 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.os.Bundle;
-import android.view.View;
+import android.util.AttributeSet;
 
-import androidx.annotation.Nullable;
-
-import edu.wuwang.opengl.BaseActivity;
-import edu.wuwang.opengl.R;
 import java.util.List;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-/**
- * Created by aiya on 2017/5/19.
- */
-
-public class VrContextActivity extends BaseActivity implements GLTextureView.Renderer, GLSurfaceView.Renderer,SensorEventListener {
-
-    private View mGLView;
-    private SensorManager mSensorManager;
-    private Sensor mSensorRotation;
+public class VRView extends GLTextureView implements GLTextureView.Renderer, GLSurfaceView.Renderer, SensorEventListener {
     private SkySphere mSkySphere;
-
     private float[] matrix = new float[16];
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.glview);
+    private SensorManager mSensorManager;
+    private Sensor mSensorRotation;
 
-        mSensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
+    public VRView(Context context) {
+        super(context);
+        init(null);
+    }
+
+    public VRView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(attrs);
+    }
+
+  /*  public VRView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(attrs);
+    }*/
+
+    private void init(AttributeSet attrs) {
+        mSensorManager=(SensorManager)getContext().getSystemService(Context.SENSOR_SERVICE);
         List<Sensor> sensors=mSensorManager.getSensorList(Sensor.TYPE_ALL);
         //todo 判断是否存在rotation vector sensor
         mSensorRotation =mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        setEGLContextClientVersion(2);
+        setRenderer(this);
+        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        mSkySphere=new SkySphere(getContext(),"vr/down2.jpg");
 
-        mGLView = findViewById(R.id.mGLView);
-        if(mGLView instanceof GLTextureView) {
-            ((GLTextureView) mGLView).setEGLContextClientVersion(2);
-            ((GLTextureView) mGLView).setRenderer(this);
-            ((GLTextureView) mGLView).setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        } else if(mGLView instanceof GLSurfaceView) {
-            ((GLSurfaceView) mGLView).setEGLContextClientVersion(2);
-            ((GLSurfaceView) mGLView).setRenderer(this);
-            ((GLSurfaceView) mGLView).setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        }
-
-        mSkySphere=new SkySphere(this.getApplicationContext(),"vr/down2.jpg");
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         mSensorManager.registerListener(this, mSensorRotation,SensorManager.SENSOR_DELAY_GAME);
-        if(mGLView instanceof GLTextureView)
-        ((GLTextureView) mGLView).onResume();
-        else if(mGLView instanceof GLSurfaceView)
-            ((GLSurfaceView) mGLView).onResume();
+
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    public void onPause() {
         mSensorManager.unregisterListener(this);
-        if(mGLView instanceof GLTextureView)
-            ((GLTextureView) mGLView).onPause();
-        else if(mGLView instanceof GLSurfaceView)
-            ((GLSurfaceView) mGLView).onPause();
+        super.onPause();
     }
 
     @Override
@@ -100,6 +86,7 @@ public class VrContextActivity extends BaseActivity implements GLTextureView.Ren
     public void onSurfaceDestroyed(GL10 gl) {
 
     }
+
 
     @Override
     public void onSensorChanged(SensorEvent event) {
