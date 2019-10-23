@@ -4,22 +4,26 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.SensorManager;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
+import android.util.Log;
+
 import edu.wuwang.opengl.utils.Gl2Utils;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import javax.microedition.khronos.opengles.GL;
 
 /**
  * Created by aiya on 2017/5/19.
  */
 
 public class SkySphere{
+    private static final String TAG = "SkySphere";
 
     private static final float UNIT_SIZE = 1f;// 单位尺寸
     private float r = 2f; // 球的半径
@@ -45,7 +49,96 @@ public class SkySphere{
     private float[] mViewMatrix=new float[16];
     private float[] mProjectMatrix=new float[16];
     private float[] mModelMatrix=new float[16];
-    private float[] mRotateMatrix=new float[16];
+
+
+    private boolean mIsInitRotate = false;
+    private float[
+            ] mInitRotateMatrix = new float[16];
+    private float[] mCurrentRotatedMatrix =new float[16];
+    private float[] mAppliedRotateMatrix = new float[16];
+
+    private float[] mInitRotateVector;
+    private float[] mCurrentRotateVector;
+    private float[] mAppliedRotateVector;
+
+    private void updateMatrix() {
+        for (int i = 0; i < mAppliedRotateVector.length; i++) {
+            mAppliedRotateVector[i] =// 0.5f +
+                    mCurrentRotateVector[i]
+                    //- mInitRotateVector[i]
+            ;
+           // if(mAppliedRotateVector[i]>1.0) mAppliedRotateVector[i] = mAppliedRotateVector[i] - 1.5f;
+        }
+        SensorManager.getRotationMatrixFromVector(mCurrentRotatedMatrix,mAppliedRotateVector);
+         System.arraycopy(mCurrentRotatedMatrix,0,mAppliedRotateMatrix,0,16);
+       // Matrix.rotateM(mAppliedRotateMatrix,0,mCurrentRotatedMatrix,0,90,1f,0f,0f);
+       // Matrix.rotateM(mAppliedRotateMatrix,0,180,0f,1f,0f);
+    }
+
+    private void updateAppliedRotateMatrix() {
+        for (int i = 0; i < 16; i++) {
+            mAppliedRotateMatrix[i] = mCurrentRotatedMatrix[i];// - mInitRotateMatrix[i];
+        }
+    }
+    /*
+        [0]          [1]        [2]    [3]     [4]           [5]        [6]     [7]     [8]        [9]         [10]
+    -0.9956346 -0.008177486 0.09297807 0.0 0.0099688275 -0.99977326 0.018818181 0.0 0.0928031  0.019662913 0.99549025  0.0 0.0 0.0 0.0 1.0
+    -0.6924454  0.009915203 0.7214021  0.0 0.71979225   -0.05866182 0.6917064   0.0 0.04917717 0.99822867  0.033483267 0.0 0.0 0.0 0.0 1.0
+     */
+
+    DecimalFormat df = new DecimalFormat("0.00");
+    public void setVector(float[] vector) {
+        if(!mIsInitRotate) {
+            mIsInitRotate = true;
+            mInitRotateVector = new float[vector.length];
+            mCurrentRotateVector = new float[vector.length];
+            mAppliedRotateVector = new float[vector.length];
+            System.arraycopy(vector,0,mInitRotateVector,0,vector.length);
+            System.arraycopy(vector,0,mCurrentRotateVector,0,vector.length);
+        }
+        else
+            System.arraycopy(vector,0,mCurrentRotateVector,0,vector.length);
+
+        updateMatrix();
+
+        StringBuilder vectorStr =  new StringBuilder("rotate  vector: ");
+        StringBuilder currentStr = new StringBuilder("current vector: ");
+
+        for (int i = 0; i < vector.length; i++) {
+            currentStr.append(Float.parseFloat(df.format(vector[i]))).append(' ');
+            vectorStr.append(mAppliedRotateVector[i]).append(' ');
+        }
+        Log.d(TAG, currentStr.toString());
+     //   Log.d(TAG, vectorStr.toString());
+        Log.d(TAG, "\n");
+    }
+
+    public void recalibrate() {
+        mIsInitRotate = false;
+    }
+
+    public void setMatrix(float[] matrix, float[] vector){
+        if(!mIsInitRotate) {
+            mIsInitRotate = true;
+            System.arraycopy(matrix,0, mInitRotateMatrix,0,16);
+            System.arraycopy(matrix,0, mCurrentRotatedMatrix,0,16);
+        } else {
+         // calculate
+            System.arraycopy(matrix,0, mCurrentRotatedMatrix,0,16);
+        }
+
+        updateAppliedRotateMatrix();
+        StringBuilder matrixStr = new StringBuilder("rotate matrix: ");
+        StringBuilder vectorStr = new StringBuilder("rotate vector: ");
+        for (int i = 0; i < 16; i++) {
+            matrixStr.append(matrix[i]).append(' ');
+        }
+
+        for (int i = 0; i < 3; i++) {
+            vectorStr.append(vector[i]).append(' ');
+        }
+        Log.d(TAG, vectorStr.toString());
+    }
 
     private FloatBuffer posBuffer;
     private FloatBuffer cooBuffer;
@@ -57,7 +150,7 @@ public class SkySphere{
     public SkySphere(Context context,String texture){
         this.res=context.getResources();
         try {
-            mBitmap=BitmapFactory.decodeStream(context.getAssets().open(texture));
+            mBitmap = BitmapFactory.decodeStream(context.getAssets().open(texture));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,10 +181,7 @@ public class SkySphere{
         //模型矩阵
         Matrix.setIdentityM(mModelMatrix,0);
         //Matrix.scaleM(mModelMatrix,0,2,2,2);
-    }
 
-    public void setMatrix(float[] matrix){
-        System.arraycopy(matrix,0,mRotateMatrix,0,16);
     }
 
     public void draw(){
@@ -100,7 +190,7 @@ public class SkySphere{
         GLES20.glUniformMatrix4fv(mHProjMatrix,1,false,mProjectMatrix,0);
         GLES20.glUniformMatrix4fv(mHViewMatrix,1,false,mViewMatrix,0);
         GLES20.glUniformMatrix4fv(mHModelMatrix,1,false,mModelMatrix,0);
-        GLES20.glUniformMatrix4fv(mHRotateMatrix,1,false,mRotateMatrix,0);
+        GLES20.glUniformMatrix4fv(mHRotateMatrix,1,false, mAppliedRotateMatrix,0);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,textureId);
 

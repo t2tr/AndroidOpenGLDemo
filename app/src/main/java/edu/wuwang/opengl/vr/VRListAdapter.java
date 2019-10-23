@@ -42,11 +42,12 @@ public class VRListAdapter extends RecyclerView.Adapter<VRListAdapter.VRListHold
         return mData.size();
     }
 
-    public class VRListHolder extends RecyclerView.ViewHolder {
+    public class VRListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         View mView;
         public VRListHolder(@NonNull View itemView) {
             super(itemView);
             mView = itemView.findViewById(R.id.vr_view);
+            mView.setOnClickListener(this);
             if(mView instanceof GLSurfaceView)
             ((GLSurfaceView) mView).onResume();
             else if(mView instanceof GLTextureView)
@@ -56,5 +57,10 @@ public class VRListAdapter extends RecyclerView.Adapter<VRListAdapter.VRListHold
         public void bind() {
         }
 
+        @Override
+        public void onClick(View v) {
+            if(mView instanceof VRView)
+                ((VRView) mView).recalibrate();
+        }
     }
 }

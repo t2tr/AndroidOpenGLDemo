@@ -22,7 +22,7 @@ import javax.microedition.khronos.opengles.GL10;
  * Created by aiya on 2017/5/19.
  */
 
-public class VrContextActivity extends BaseActivity implements GLTextureView.Renderer, GLSurfaceView.Renderer,SensorEventListener {
+public class VrContextActivity extends BaseActivity implements GLTextureView.Renderer, GLSurfaceView.Renderer, SensorEventListener, View.OnClickListener {
 
     private View mGLView;
     private SensorManager mSensorManager;
@@ -53,6 +53,7 @@ public class VrContextActivity extends BaseActivity implements GLTextureView.Ren
         }
 
         mSkySphere=new SkySphere(this.getApplicationContext(),"vr/down2.jpg");
+        mGLView.setOnClickListener(this);
     }
 
     @Override
@@ -103,12 +104,18 @@ public class VrContextActivity extends BaseActivity implements GLTextureView.Ren
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        SensorManager.getRotationMatrixFromVector(matrix,event.values);
-        mSkySphere.setMatrix(matrix);
+       // SensorManager.getRotationMatrixFromVector(matrix,event.values);
+       // mSkySphere.setMatrix(matrix,event.values);
+        mSkySphere.setVector(event.values);
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(mSkySphere!=null) mSkySphere.recalibrate();
     }
 }

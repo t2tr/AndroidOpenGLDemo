@@ -36,6 +36,10 @@ public class VRView extends GLTextureView implements GLTextureView.Renderer, GLS
         init(attrs);
     }*/
 
+  public void recalibrate() {
+      if(mSkySphere!=null) mSkySphere.recalibrate();
+  }
+
     private void init(AttributeSet attrs) {
         mSensorManager=(SensorManager)getContext().getSystemService(Context.SENSOR_SERVICE);
         List<Sensor> sensors=mSensorManager.getSensorList(Sensor.TYPE_ALL);
@@ -44,7 +48,7 @@ public class VRView extends GLTextureView implements GLTextureView.Renderer, GLS
         setEGLContextClientVersion(2);
         setRenderer(this);
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        mSkySphere=new SkySphere(getContext(),"vr/down2.jpg");
+        mSkySphere=new SkySphere(getContext(),"vr/down1.jpg");
 
     }
 
@@ -90,8 +94,9 @@ public class VRView extends GLTextureView implements GLTextureView.Renderer, GLS
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        SensorManager.getRotationMatrixFromVector(matrix,event.values);
-        mSkySphere.setMatrix(matrix);
+        //SensorManager.getRotationMatrixFromVector(matrix,event.values);
+       // mSkySphere.setMatrix(matrix,event.values);
+        mSkySphere.setVector(event.values);
     }
 
     @Override
