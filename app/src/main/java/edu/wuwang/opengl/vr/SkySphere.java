@@ -61,10 +61,14 @@ public class SkySphere{
 
     private final float[] mStartRotateMatrix = new float[] {
             1,0,0,0,
+            0,0,-1,0,
             0,1,0,0,
-            0,0,1,0,
             0,0,0,1
     };
+ /*  1,0,0,0,
+           0,0,-1,0,
+           0,1,0,0,
+           0,0,0,1*/
     private float[] mRotateVector;
 
     private void updateMatrix() {
@@ -72,10 +76,21 @@ public class SkySphere{
 
         SensorManager.getRotationMatrixFromVector(mSensorRotationMatrix, mRotateVector);
 
-        if(mMode==0)
-        System.arraycopy(mStartRotateMatrix,0, mRotateMatrix,0,16);
-        else System.arraycopy(mSensorRotationMatrix,0,mRotateMatrix,0,16);
-        // Matrix.rotateM(mAppliedRotateMatrix,0,mCurrentRotatedMatrix,0,90,1f,0f,0f);
+/*        float[] orientations = new float[3];
+        for (int i = 0; i < 3; i++) {
+            orientations[i] = (float) Math.toDegrees(mRotateVector[i]);
+        }
+        Log.d(TAG, "orientation : "+ orientations[0]+", "+orientations[1]+", "+orientations[2]);*/
+        if(mMode==0) {
+            System.arraycopy(mStartRotateMatrix, 0, mRotateMatrix, 0, 16);
+        }
+        else {
+            System.arraycopy(mSensorRotationMatrix,0,mRotateMatrix,0,16);
+
+            Matrix.rotateM(mRotateMatrix,0,90,0,0,1);
+           // Matrix.rotateM(mRotateMatrix,0,90,0,1,0);
+
+        }
     }
 
     private void updateAppliedRotateMatrix() {
@@ -180,15 +195,18 @@ public class SkySphere{
         //设置透视投影
         //Matrix.frustumM(mProjectMatrix, 0, -ratio*skyRate, ratio*skyRate, -1*skyRate, 1*skyRate, 1, 200);
         //透视投影矩阵/视锥
-        MatrixHelper.perspectiveM(mProjectMatrix,0,90,ratio,1f,300);
+        Matrix.perspectiveM(mProjectMatrix,0,90,ratio,1f,300);
         //设置相机位置
-        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0.0f,0.0f, 0.0f, 0.0f,-1.0f, 0f,1.0f, 0.0f);
+        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f,0.0f, 0.0f, 0.0f,1f, 0f,1.0f, 0.0f);
         //模型矩阵
         Matrix.setIdentityM(mModelMatrix,0);
+        //Matrix.scaleM(mModelMatrix,0,1,-1,1);
+       // Matrix.perspectiveM();
 
-        Matrix.setRotateM(mStartRotateMatrix,0,90,-1,0,0);
+      //  Matrix.setRotateM(mStartRotateMatrix,0,90,-1,0,0);
+       // Matrix.setRotateEulerM(mStartRotateMatrix,0,-1,0,0);
+        Matrix.rotateM(mStartRotateMatrix,0,90,0,0,1);
         Log.d(TAG, "setSize!!");
-       //Matrix.scaleM(mModelMatrix,0,1,-1,1);
 
     }
 
