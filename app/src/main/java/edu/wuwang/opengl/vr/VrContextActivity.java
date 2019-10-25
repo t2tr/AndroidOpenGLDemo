@@ -52,7 +52,7 @@ public class VrContextActivity extends BaseActivity implements GLTextureView.Ren
             ((GLSurfaceView) mGLView).setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         }
 
-        mSkySphere=new SkySphere(this.getApplicationContext(),"vr/down2.jpg");
+        mSkySphere=new SkySphere(this.getApplicationContext(),"vr/360sp.jpg");
         mGLView.setOnClickListener(this);
     }
 
