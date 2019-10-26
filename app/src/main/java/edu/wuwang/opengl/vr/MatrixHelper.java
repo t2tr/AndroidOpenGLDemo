@@ -11,7 +11,7 @@ public class MatrixHelper {
         float f = 1.0f / (float) Math.tan(fovy * (Math.PI / 360.0));
         float rangeReciprocal = 1.0f / (zNear - zFar);
 
-        m[offset + 0] = f / aspect;
+        m[offset] = f / aspect;
         m[offset + 1] = 0.0f;
         m[offset + 2] = 0.0f;
         m[offset + 3] = 0.0f;

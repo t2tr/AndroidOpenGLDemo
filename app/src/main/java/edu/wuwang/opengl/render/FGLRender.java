@@ -8,6 +8,7 @@ package edu.wuwang.opengl.render;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
 import android.util.Log;
 import android.view.View;
 
@@ -20,6 +21,11 @@ import javax.microedition.khronos.opengles.GL10;
  * Description:
  */
 public class FGLRender extends Shape {
+
+    // vPMatrix is an abbreviation for "Model View Projection Matrix"
+    private final float[] vPMatrix = new float[16];
+    private final float[] projectionMatrix = new float[16];
+    private final float[] viewMatrix = new float[16];
 
     private Shape shape;
     private Class<? extends Shape> clazz=Cube.class;

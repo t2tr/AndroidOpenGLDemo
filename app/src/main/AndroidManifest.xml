@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="edu.wuwang.opengl">
 
 
@@ -16,7 +17,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+       >
         <activity android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -25,7 +27,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".render.FGLViewActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
         </activity>
         <activity android:name=".ChooseActivity"
             android:screenOrientation="portrait">
@@ -58,6 +61,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".light.LightActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".vr.VRListActivity" />
     </application>
 
 </manifest>

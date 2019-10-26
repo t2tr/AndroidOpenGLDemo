@@ -10,5 +10,5 @@ varying vec2 vCoordinate;
 
 void main(){
     gl_Position=uProjMatrix*uRotateMatrix*uViewMatrix*uModelMatrix*vec4(aPosition,1);
-    vCoordinate=aCoordinate;
+    vCoordinate = vec2(aCoordinate.x, 1.0 - aCoordinate.y);
 }
