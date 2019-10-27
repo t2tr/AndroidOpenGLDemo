@@ -22,8 +22,8 @@ import java.util.ArrayList;
  * Created by aiya on 2017/5/19.
  */
 
-public class SkySphere{
-    private static final String TAG = "SkySphere";
+public class Sphere {
+    private static final String TAG = "Sphere";
 
     private static final float UNIT_SIZE = 1f;// 单位尺寸
     private float r = 2f; // 球的半径
@@ -33,6 +33,7 @@ public class SkySphere{
     final double angleSpan = Math.PI/90f;// 将球进行单位切分的角度
     int vCount = 0;// 顶点个数，先初始化为0
 
+    private static final float FROM_RADS_TO_DEGS = -57.2957795f;
     private Resources res;
 
     private int mHProgram;
@@ -51,53 +52,24 @@ public class SkySphere{
     private float[] mModelMatrix=new float[16];
 
 
-    private boolean mIsInitRotate = false;
-    private float[] mInitRotateMatrix = new float[16];
-    private float[] mSensorRotationMatrix =new float[16];
+    private boolean mIsInitSensor = false;
     private float[] mRotateMatrix = new float[16];
 
     private float[] mInitRotateVector;
     private float[] mSensorVector;
 
-    private final float[] mStartRotateMatrix = new float[] {
-            1,0,0,0,
+    private final float[] mCenterMatrix = new float[] {
             0,0,-1,0,
+            -1,0,0,0,
             0,1,0,0,
             0,0,0,1
     };
- /*  1,0,0,0,
+
+    /*  1,0,0,0,
            0,0,-1,0,
            0,1,0,0,
            0,0,0,1*/
     private float[] mRotateVector;
-
-    private void updateMatrix() {
-        System.arraycopy(mSensorVector,0,mRotateVector,0,mSensorVector.length);
-
-        SensorManager.getRotationMatrixFromVector(mSensorRotationMatrix, mRotateVector);
-
-/*        float[] orientations = new float[3];
-        for (int i = 0; i < 3; i++) {
-            orientations[i] = (float) Math.toDegrees(mRotateVector[i]);
-        }
-        Log.d(TAG, "orientation : "+ orientations[0]+", "+orientations[1]+", "+orientations[2]);*/
-        if(mMode==0) {
-            System.arraycopy(mStartRotateMatrix, 0, mRotateMatrix, 0, 16);
-        }
-        else {
-            System.arraycopy(mSensorRotationMatrix,0,mRotateMatrix,0,16);
-
-            Matrix.rotateM(mRotateMatrix,0,90,0,0,1);
-           // Matrix.rotateM(mRotateMatrix,0,90,0,1,0);
-
-        }
-    }
-
-    private void updateAppliedRotateMatrix() {
-        for (int i = 0; i < 16; i++) {
-            mRotateMatrix[i] = mSensorRotationMatrix[i];// - mInitRotateMatrix[i];
-        }
-    }
     /*
         [0]          [1]        [2]    [3]     [4]           [5]        [6]     [7]     [8]        [9]         [10]
     -0.9956346 -0.008177486 0.09297807 0.0 0.0099688275 -0.99977326 0.018818181 0.0 0.0928031  0.019662913 0.99549025  0.0 0.0 0.0 0.0 1.0
@@ -105,59 +77,109 @@ public class SkySphere{
      */
 
     DecimalFormat df = new DecimalFormat("0.00");
-    public void setVector(float[] vector) {
-        if(!mIsInitRotate) {
-            mIsInitRotate = true;
-            mInitRotateVector = new float[vector.length];
-            mSensorVector = new float[vector.length];
-            mRotateVector = new float[vector.length];
-            System.arraycopy(vector,0,mInitRotateVector,0,vector.length);
-            System.arraycopy(vector,0, mSensorVector,0,vector.length);
+    private float[] startRotateSensorOrient = new float[3];
+    private float[] currentRotateSensorOrient = new float[3];
+    private float[] currentOrient = new float[3];
+    public void setVector(float[] values) {
+        float[] vectors;
+        if (values.length > 4) {
+            vectors = new float[4];
+            System.arraycopy(values, 0, vectors, 0, 4);
+        } else
+            vectors = values;
+
+        calculateV4(vectors);
+    }
+
+    private void calculateBasedOnGravity(float[] vectors) {
+        SensorManager.getRotationMatrixFromVector(mRotateMatrix,vectors);
+    }
+
+    private float[] initSensorM = new float[16];
+    private float[] currentSensorM = new float[16];
+    private float[] angleChange = new float[3];
+    private void calculateV4(float[] vectors) {
+        if(!mIsInitSensor) {
+            mIsInitSensor = true;
+            SensorManager.getRotationMatrixFromVector(initSensorM,vectors);
         }
-        else
-            System.arraycopy(vector,0, mSensorVector,0,vector.length);
 
-        updateMatrix();
+        SensorManager.getRotationMatrixFromVector(currentSensorM,vectors);
 
-        StringBuilder vectorStr =  new StringBuilder("rotate  vector: ");
-        StringBuilder currentStr = new StringBuilder("current vector: ");
+        SensorManager.getAngleChange(angleChange,currentSensorM,initSensorM);
+        float[] temp = new float[16];
+        Matrix.rotateM(temp,0,mCenterMatrix,0,angleChange[1]*FROM_RADS_TO_DEGS,0,1,0);
 
-        for (int i = 0; i < vector.length; i++) {
-            currentStr.append(Float.parseFloat(df.format(vector[i]))).append(' ');
-            vectorStr.append(mRotateVector[i]).append(' ');
+        Matrix.rotateM(mRotateMatrix,0,temp,0,-angleChange[2]*FROM_RADS_TO_DEGS,0,0,-1);
+    }
+
+    private void calculateV3(float[] vectors) {
+
+        if(!mIsInitSensor) {
+            mIsInitSensor = true;
+            retrieveOrientationType1(vectors, startRotateSensorOrient);
         }
-        Log.d(TAG, currentStr.toString());
-     //   Log.d(TAG, vectorStr.toString());
-        Log.d(TAG, "\n");
+
+        retrieveOrientationType1(vectors, currentRotateSensorOrient);
+
+        for (int i = 0; i < 3; i++) {
+            currentOrient[i] = currentRotateSensorOrient[i] - startRotateSensorOrient[i];
+        }
+
+        log3("rotate sensor", currentRotateSensorOrient);
+        log3("rotate sphere", currentOrient);
+        Log.d(TAG, "------------");
+
+        float[] temp = new float[16];
+        Matrix.rotateM(temp,0,mCenterMatrix,0, currentOrient[0],0,1,0);
+      //  float[] temp1 = new float[16];
+        //   Matrix.rotateM(temp1,0,temp,0,currentOrient[1],1,0,0);
+        Matrix.rotateM(mRotateMatrix,0,temp,0, currentOrient[2],0,0,-1);
+    }
+
+    private void retrieveOrientationType2(float[] vectors, float[] outYPR) {
+        float[] rotationMatrix = new float[9];
+        SensorManager.getRotationMatrixFromVector(rotationMatrix, vectors);
+        int worldAxisX = SensorManager.AXIS_X;
+        int worldAxisZ = SensorManager.AXIS_Z;
+        float[] adjustedRotationMatrix = new float[9];
+        SensorManager.remapCoordinateSystem(rotationMatrix, worldAxisX, worldAxisZ, adjustedRotationMatrix);
+        float[] orientation = new float[3];
+        SensorManager.getOrientation(rotationMatrix, orientation);
+        float yaw = orientation[0] * FROM_RADS_TO_DEGS;
+        float pitch = orientation[1] * FROM_RADS_TO_DEGS;
+        float roll = orientation[2] * FROM_RADS_TO_DEGS;
+        outYPR[0] = pitch; // x
+        outYPR[1] = roll; // y
+        outYPR[2] = yaw; // z
+    }
+
+    private void retrieveOrientationType1(float[] vectors, float[] outYPR) {
+        float[] rotationMatrix = new float[9];
+        SensorManager.getRotationMatrixFromVector(rotationMatrix, vectors);
+        int worldAxisX = SensorManager.AXIS_X;
+        int worldAxisZ = SensorManager.AXIS_Z;
+        float[] adjustedRotationMatrix = new float[9];
+        SensorManager.remapCoordinateSystem(rotationMatrix, worldAxisX, worldAxisZ, adjustedRotationMatrix);
+        float[] orientation = new float[3];
+        SensorManager.getOrientation(adjustedRotationMatrix, orientation);
+        float yaw = orientation[0] * FROM_RADS_TO_DEGS;
+        float pitch = orientation[1] * FROM_RADS_TO_DEGS;
+        float roll = orientation[2] * FROM_RADS_TO_DEGS;
+        outYPR[0] = pitch; // x
+        outYPR[1] = roll; // y
+        outYPR[2] = yaw; // z
+    }
+
+    private void log3(String name, float[] xyz) {
+        Log.d(TAG, "report "+name+": x = "+df.format(xyz[0])+", y = "+ df.format(xyz[1])+", z = " + df.format(xyz[2]));
+
     }
 
     private int mMode = 0;
     public synchronized void recalibrate() {
-        mIsInitRotate = false;
+        mIsInitSensor = false;
         mMode = (mMode==0) ? 1 : 0;
-    }
-
-    public void setMatrix(float[] matrix, float[] vector){
-        if(!mIsInitRotate) {
-            mIsInitRotate = true;
-            System.arraycopy(matrix,0, mInitRotateMatrix,0,16);
-            System.arraycopy(matrix,0, mSensorRotationMatrix,0,16);
-        } else {
-         // calculate
-            System.arraycopy(matrix,0, mSensorRotationMatrix,0,16);
-        }
-
-        updateAppliedRotateMatrix();
-        StringBuilder matrixStr = new StringBuilder("rotate matrix: ");
-        StringBuilder vectorStr = new StringBuilder("rotate vector: ");
-        for (int i = 0; i < 16; i++) {
-            matrixStr.append(matrix[i]).append(' ');
-        }
-
-        for (int i = 0; i < 3; i++) {
-            vectorStr.append(vector[i]).append(' ');
-        }
-        Log.d(TAG, vectorStr.toString());
     }
 
     private FloatBuffer posBuffer;
@@ -167,7 +189,7 @@ public class SkySphere{
 
     private Bitmap mBitmap;
 
-    public SkySphere(Context context,String texture){
+    public Sphere(Context context, String texture){
         this.res=context.getResources();
         try {
             mBitmap = BitmapFactory.decodeStream(context.getAssets().open(texture));
@@ -195,17 +217,12 @@ public class SkySphere{
         //设置透视投影
         //Matrix.frustumM(mProjectMatrix, 0, -ratio*skyRate, ratio*skyRate, -1*skyRate, 1*skyRate, 1, 200);
         //透视投影矩阵/视锥
-        Matrix.perspectiveM(mProjectMatrix,0,90,ratio,1f,300);
+
+        Matrix.perspectiveM(mProjectMatrix,0,90f,ratio,1f,300);
         //设置相机位置
         Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f,0.0f, 0.0f, 0.0f,1f, 0f,1.0f, 0.0f);
         //模型矩阵
         Matrix.setIdentityM(mModelMatrix,0);
-        //Matrix.scaleM(mModelMatrix,0,1,-1,1);
-       // Matrix.perspectiveM();
-
-      //  Matrix.setRotateM(mStartRotateMatrix,0,90,-1,0,0);
-       // Matrix.setRotateEulerM(mStartRotateMatrix,0,-1,0,0);
-        Matrix.rotateM(mStartRotateMatrix,0,90,0,0,1);
         Log.d(TAG, "setSize!!");
 
     }

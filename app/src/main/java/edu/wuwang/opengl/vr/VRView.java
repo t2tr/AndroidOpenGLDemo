@@ -1,6 +1,9 @@
 package edu.wuwang.opengl.vr;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,7 +18,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class VRView extends GLTextureView implements GLTextureView.Renderer, GLSurfaceView.Renderer, SensorEventListener {
-    private SkySphere mSkySphere;
+    private Sphere mSkySphere;
     private float[] matrix = new float[16];
 
     private SensorManager mSensorManager;
@@ -48,7 +51,7 @@ public class VRView extends GLTextureView implements GLTextureView.Renderer, GLS
         setEGLContextClientVersion(2);
         setRenderer(this);
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        mSkySphere=new SkySphere(getContext(),"vr/down1.jpg");
+        mSkySphere=new Sphere(getContext(),"vr/down1.jpg");
 
     }
 
@@ -73,9 +76,13 @@ public class VRView extends GLTextureView implements GLTextureView.Renderer, GLS
         GLES20.glCullFace(GLES20.GL_FRONT);
     }
 
+    private float w, h;
+
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         mSkySphere.setSize(width, height);
+        w = width;
+        h = height;
         GLES20.glViewport(0,0,width,height);
     }
 
@@ -88,7 +95,6 @@ public class VRView extends GLTextureView implements GLTextureView.Renderer, GLS
 
     @Override
     public void onSurfaceDestroyed(GL10 gl) {
-
     }
 
 
