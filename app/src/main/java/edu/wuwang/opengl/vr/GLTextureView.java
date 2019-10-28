@@ -27,13 +27,13 @@ public class GLTextureView
         View.OnLayoutChangeListener {
 
     private final static String TAG = "GLTextureView";
-    private final static boolean LOG_ATTACH_DETACH = true;
-    private final static boolean LOG_THREADS = true;
-    private final static boolean LOG_PAUSE_RESUME = true;
-    private final static boolean LOG_SURFACE = true;
-    private final static boolean LOG_RENDERER = true;
+    private final static boolean LOG_ATTACH_DETACH = false;
+    private final static boolean LOG_THREADS = false;
+    private final static boolean LOG_PAUSE_RESUME = false;
+    private final static boolean LOG_SURFACE = false;
+    private final static boolean LOG_RENDERER = false;
     private final static boolean LOG_RENDERER_DRAW_FRAME = false;
-    private final static boolean LOG_EGL = true;
+    private final static boolean LOG_EGL = false;
     /**
      * The renderer only renders
      * when the surface is created, or when {@link #requestRender} is called.
@@ -1231,8 +1231,7 @@ public class GLTextureView
                             // When pausing, optionally release the EGL Context:
                             if (pausing && mHaveEglContext) {
                                 GLTextureView view = mGLSurfaceViewWeakRef.get();
-                                boolean preserveEglContextOnPause = view == null ?
-                                        false : view.mPreserveEGLContextOnPause;
+                                boolean preserveEglContextOnPause = view != null && view.mPreserveEGLContextOnPause;
                                 if (!preserveEglContextOnPause || sGLThreadManager.shouldReleaseEGLContextWhenPausing()) {
                                     stopEglContextLocked();
                                     if (LOG_SURFACE) {

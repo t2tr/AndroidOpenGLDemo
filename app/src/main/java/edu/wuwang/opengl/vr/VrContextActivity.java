@@ -8,6 +8,7 @@ import android.hardware.SensorManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -23,18 +24,18 @@ import javax.microedition.khronos.opengles.GL10;
  */
 
 public class VrContextActivity extends BaseActivity implements GLTextureView.Renderer, GLSurfaceView.Renderer, SensorEventListener, View.OnClickListener {
+    private static final String TAG = "VrContextActivity";
 
     private View mGLView;
     private SensorManager mSensorManager;
     private Sensor mSensorRotation;
-    private SkySphere mSkySphere;
-
-    private float[] matrix = new float[16];
+    private Sphere mSkySphere;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.glview);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR );
 
         mSensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
         List<Sensor> sensors=mSensorManager.getSensorList(Sensor.TYPE_ALL);
@@ -52,7 +53,7 @@ public class VrContextActivity extends BaseActivity implements GLTextureView.Ren
             ((GLSurfaceView) mGLView).setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         }
 
-        mSkySphere=new SkySphere(this.getApplicationContext(),"vr/360sp.jpg");
+        mSkySphere=new Sphere(this.getApplicationContext(),"vr/down2.jpg");
         mGLView.setOnClickListener(this);
     }
 
